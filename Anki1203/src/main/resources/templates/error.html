@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>エラー</title>
+</head>
+<body>
+    <h1>エラーが発生しました・すでに登録してあるかも</h1>
+    <p th:text="${errorMessage != null ? errorMessage : '不明なエラーです。'}"></p>
+    <a href="javascript:history.back()">戻る</a>
+</body>
+</html>

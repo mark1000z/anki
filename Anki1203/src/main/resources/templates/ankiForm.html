@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>ankiForm</title>
+</head>
+<body>
+
+<title>クロアチア語 単語帳</title>
+    <style> 
+    body {
+        background-image: url('/images/croatia3.jpg');
+        background-size: 100% 30%; /* 横幅を画面全体にフィットさせ、縦はそのまま */
+        background-repeat: no-repeat;
+        background-position: top; /* 画像を上部に配置 */
+    }
+
+    h1 {
+        color:yellow;
+        background-color: transparent;
+        display: inline-block;
+        padding: 5px;
+        border-radius: 5px;
+        /* max-width: fit-content; */
+        font-size: 50px;
+        text-shadow:
+         -1px -1px 0 dimgray,
+         1px -1px 0 dimgray,
+         -1px 1px 0 dimgray,
+        2px 2px 0 dimgray;
+
+    }
+
+    a {
+        background-color: rgba(255, 255, 255, 0.5);
+        display: inline-block;
+        padding: 5px;
+        text-decoration: none;
+        border-radius: 5px;
+        max-width: fit-content;
+    }
+
+    .input-container, .saved-words-container {
+        border: none;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 0px;
+        box-shadow: none;
+    }
+
+    table {
+        width: 100%;
+        border: 2px solid #000;
+        border-collapse: collapse;
+        margin-top: 10px;
+        background-color: rgba(255, 255, 255, 0.8);
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 8px;
+        text-align: left;
+        background-color: rgba(255, 255, 255, 0.7);
+    }
+
+    th {
+        background-color: rgba(200, 200, 200, 0.8);
+    }
+
+    input[type="text"] {
+        border: 2px solid #000;
+        padding: 15px;
+        border-radius: 5px;
+        width: 300px;
+        box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+        font-size:15px;
+    }
+
+    .button-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 10px 0;
+       
+    }
+
+    input[type="submit"][value="削除"] {
+        background-color: red;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    input[type="submit"][value="削除"]:hover {
+        background-color: darkred;
+    }
+
+    input[type="submit"][value="更新"] {
+        background-color: green;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    input[type="submit"][value="更新"]:hover {
+        background-color: darkgreen;
+    }
+
+    .error-message {
+        color: red;
+    }
+
+    input[type="submit"][value="保存"] {
+        background-color: orangered; /* オレンジ色 */
+        color: white;
+        border: 30;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-size:30px;
+    }
+
+    input[type="submit"][value="保存"]:hover {
+        background-color: darkorange; /* ホバー時の色 */
+    }
+
+    h2 {
+        color: red;
+    }
+
+    #caseIndicator {
+        color: red; /* 文字の色を緑に設定 */
+        font-weight: bold;
+        font-size: 1.5em;
+    }
+    .link-button{
+	 display: inline-block;
+    background-color: #4CAF50; /* ボタンの背景色 */
+    color: white; /* ボタン内の文字色 */
+    padding: 10px 20px; /* 内側の余白 */
+    text-align: center; /* 文字を中央に */
+    text-decoration: none; /* リンクの下線を削除 */
+    border-radius: 5px; /* 角を丸く */
+    font-size: 25px; /* 文字サイズ */
+    transition: background-color 0.3s; /* ホバー時の背景色変更をスムーズに */	
+	}
+	.special-link {
+    color:purple; /* 未習得単語リンクの色 */
+    font-weight: bold; /* 太字にする場合 */
+}
+</style>
+
+    <script>
+        let isUpperCase = true;
+
+        function addLetter(letter) {
+            const wordInput = document.getElementById("word");
+            const nextLetter = isUpperCase ? letter.toUpperCase() : letter.toLowerCase();
+            wordInput.value += nextLetter;
+        }
+
+        function toggleCase() {
+            isUpperCase = !isUpperCase;
+            const caseIndicator = document.getElementById("caseIndicator");
+            caseIndicator.textContent = isUpperCase ? "大文字モード" : "小文字モード";
+        }
+
+        function confirmDelete() {
+            return confirm("本当にこの単語を削除しますか？");
+        }
+
+        function deleteLastCharacter() {
+            const wordInput = document.getElementById("word");
+            const currentValue = wordInput.value;
+            // 最後の文字を削除
+            wordInput.value = currentValue.slice(0, -1);
+        }
+
+
+    function hideRow(word) {
+        const row = document.getElementById(`row-${word}`);
+        if (row) {
+            row.style.display = "none"; // 非表示に設定
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+        
+    </script>
+</head>
+<body>
+
+    <body> 
+    <div class="container">
+        <h1>クロアチア語★暗記システム</h1>
+        
+        <!-- 成功メッセージの表示 -->
+        <div th:if="${message != null}">
+            <p style="color: green;" th:text="${message}"></p>
+        </div>
+        
+        <!-- エラーメッセージの表示 -->
+        <div th:if="${errorMessage != null}" class="error-message">
+            <p th:text="${errorMessage}"></p>
+        </div>
+
+        <div class="input-container">
+            <form th:action="@{/ankiForm}" method="post">
+                <input type="text" id="word" name="word" placeholder="単語・フレーズを入力" required />
+                <br/>
+                <input type="text" id="meaning" name="meaning" placeholder="意味を入力" required/>
+                <br/>
+                <button type="button" onclick="toggleCase()">切り替え</button>
+                <span id="caseIndicator" style="font-weight: bold;">大文字モード</span>
+
+                <div class="button-container">
+                    <!-- アルファベットボタン -->
+                    <button type="button" onclick="addLetter('A')">A</button>
+                    <button type="button" onclick="addLetter('B')">B</button>
+                    <button type="button" onclick="addLetter('C')">C</button>
+                    <button type="button" onclick="addLetter('Č')">Č</button>
+                    <button type="button" onclick="addLetter('Ć')">Ć</button>
+                    <button type="button" onclick="addLetter('D')">D</button>
+                    <button type="button" onclick="addLetter('Dž')">Dž</button>
+                    <button type="button" onclick="addLetter('Đ')">Đ</button>
+                    <button type="button" onclick="addLetter('E')">E</button>
+                    <button type="button" onclick="addLetter('F')">F</button>
+                    <button type="button" onclick="addLetter('G')">G</button>
+                    <button type="button" onclick="addLetter('H')">H</button>
+                    <button type="button" onclick="addLetter('I')">I</button>
+                    <button type="button" onclick="addLetter('J')">J</button>
+                    <button type="button" onclick="addLetter('K')">K</button>
+                    <button type="button" onclick="addLetter('L')">L</button>
+                    <button type="button" onclick="addLetter('Lj')">Lj</button>
+                    <button type="button" onclick="addLetter('M')">M</button>
+                    <button type="button" onclick="addLetter('N')">N</button>
+                    <button type="button" onclick="addLetter('Nj')">Nj</button>
+                    <button type="button" onclick="addLetter('O')">O</button>
+                    <button type="button" onclick="addLetter('P')">P</button>
+                    <button type="button" onclick="addLetter('R')">R</button>
+                    <button type="button" onclick="addLetter('S')">S</button>
+                    <button type="button" onclick="addLetter('Š')">Š</button>
+                    <button type="button" onclick="addLetter('T')">T</button>
+                    <button type="button" onclick="addLetter('U')">U</button>
+                    <button type="button" onclick="addLetter('V')">V</button>
+                    <button type="button" onclick="addLetter('Z')">Z</button>
+                    <button type="button" onclick="addLetter('Ž')">Ž</button>
+                    <button type="button" onclick="addLetter('?')">?</button>
+                    <button type="button" onclick="addLetter(' ')">スペース</button>
+                    <button type="button" onclick="deleteLastCharacter()">削除</button>
+                </div>
+                <br/>
+              
+                <input type="submit" value="保存" />
+               
+					
+                <a th:href="@{/quiz}" class="link-button">忘れた単語Quiz</a>
+   			<a th:href="@{/learnedWords}" class="link-button">覚えた単語Quiz</a>
+           <a th:href="@{/learned}" class="link-button special-link">未習得単語</a>
+        
+            </form>
+        </div>
+
+        <h2>すべての単語</h2>
+        <div class="saved-words-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>単語</th>
+                        <th>意味</th>
+                        <th>削除</th>
+                        <th>更新</th>
+                    </tr>
+                </thead>
+                <tbody>
+    <tr th:each="word : ${words}" th:id="'row-' + ${word.word}">
+        <td><strong th:text="${word.word}"></strong></td>
+        <td th:text="${word.meaning}"></td>
+        <td>
+            <form th:action="@{/delete}" method="post" onsubmit="return confirmDelete();" style="display:inline;">
+                <input type="hidden" name="word" th:value="${word.word}">
+                <input type="submit" value="削除">
+            </form>
+        </td>
+        <td>
+            <form th:action="@{/learned}" method="post" style="display:inline;" onsubmit="hideRow('${word.word}');">
+                <input type="hidden" name="word" th:value="${word.word}">
+                <label class="checkbox-label">
+                    <input type="checkbox" name="learned" value="true"> 覚えた
+                </label>
+                <input type="submit" value="更新">
+            </form>
+        </td>
+    </tr>
+</tbody>
+
+  
+            
+         <div class="pagination">
+        <a th:if="${currentPage > 1}" th:href="@{/ankiForm(page=${currentPage - 1})}">前へ</a>
+        <span th:text="'ページ ' + ${currentPage} + ' / ' + ${totalPages}"></span>
+        <a th:if="${currentPage < totalPages}" th:href="@{/ankiForm(page=${currentPage + 1})}">次へ</a>
+    </div>   
+            
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+       
+            
+            
+            
+            
+            
+            
+        </div>
+
+        <br/>
+       
+    </div>
+
+</body>
+</html>

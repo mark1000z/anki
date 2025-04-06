@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>覚えた単語 - クイズ形式</title>
+</head>
+<body>
+    <h1>覚えた単語 - クイズ形式</h1>
+
+    <div th:each="quizItem : ${quizData}">
+        <h3 th:text="${quizItem['question']} + 'の意味は？'"></h3> <!-- 問題を表示 -->
+
+        <form th:action="@{/checkAnswer}" method="post">
+            <div th:each="option, iterStat : ${quizItem['options']}">
+                <input type="radio" name="answer" th:value="${option}" id="answer${iterStat.index}">
+                <label th:for="'answer' + ${iterStat.index}" th:text="${option}"></label><br>
+            </div>
+
+            <input type="hidden" name="question" th:value="${quizItem['question']}"> <!-- 問題 -->
+            <input type="hidden" name="correctAnswer" th:value="${quizItem['correctAnswer']}"> <!-- 正解 -->
+            <input type="hidden" name="wordId" th:value="${quizItem['wordId']}"> <!-- 単語ID -->
+            <button type="submit">回答する</button>
+        </form>
+    </div>
+
+    <a th:href="@{/ankiForm}">戻る</a>
+</body>
+</html>

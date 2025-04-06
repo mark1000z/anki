@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>単語ステータス更新</title>
+</head>
+<body>
+    <h1>単語ステータスの変更</h1>
+    <form th:action="@{/anki/updateStatus}" method="post">
+        <input type="hidden" name="id" th:value="${word.id}" />
+        <button type="submit" name="learned" value="1">習得済みにする</button>
+        <button type="submit" name="learned" value="2">忘れた</button>
+        <button type="submit" name="learned" value="0">未習得に戻す</button>
+    </form>
+</body>
+</html>

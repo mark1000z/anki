@@ -1,0 +1,112 @@
+<!DOCTYPE html> 
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>未習得単語</title>
+    
+    <style>
+        table {
+            width: 100%;
+            border: 2px solid #000;
+            border-collapse: collapse;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        th {
+            background-color: rgba(200, 200, 200, 0.8);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="submit"] {
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"][value="削除"] {
+            background-color: red;
+            color: white;
+            border: none;
+        }
+
+        input[type="submit"][value="削除"]:hover {
+            background-color: darkred;
+        }
+
+        input[type="submit"][value="更新"] {
+            background-color: green;
+            color: white;
+            border: none;
+        }
+
+        input[type="submit"][value="更新"]:hover {
+            background-color: darkgreen;
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>未習得単語</h1>
+<a href="/ankiForm">戻る</a>
+<div th:if="${#lists.isEmpty(learnedWords)}">
+    <p>未習得単語はありません。</p>
+</div>
+
+<div th:unless="${#lists.isEmpty(learnedWords)}">
+    <table>
+        <thead>
+            <tr>
+                <th>単語</th>
+                <th>意味</th>
+                <th>削除</th>
+                <th>更新</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="word : ${learnedWords}">
+                <td th:text="${word.word}">単語</td>
+                <td th:text="${word.meaning}">意味</td>
+                <td>
+                    <!-- 削除フォーム -->
+                    <form th:action="@{/delete}" method="post" onsubmit="return confirmDelete();" style="display:inline;">
+                        <input type="hidden" name="word" th:value="${word.word}">
+                        <input type="submit" value="削除">
+                    </form>
+                </td>
+                <td>
+                    <!-- 更新フォーム -->
+                    <form th:action="@{/learned}" method="post" style="display:inline;">
+                        <input type="hidden" name="word" th:value="${word.word}">
+                        <label>
+                            <input type="checkbox" name="learned" value="true"> 覚えた
+                        </label>
+                        <input type="submit" value="更新">
+                    </form>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<a href="/ankiForm">戻る</a>
+
+<script>
+    function confirmDelete() {
+        return confirm("本当にこの単語を削除しますか？");
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>クロアチア語 単語帳</title>
+    <style>
+        body {
+            background-image: url("images/croatia3.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        h1, h2 {
+            background-color: rgba(255, 255, 255, 0.5);
+            display: inline-block;
+            padding: 5px;
+            border-radius: 5px;
+            max-width: fit-content;
+        }
+
+        a {
+            background-color: rgba(255, 255, 255, 0.5);
+            display: inline-block;
+            padding: 5px;
+            text-decoration: none;
+            border-radius: 5px;
+            max-width: fit-content;
+        }
+
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .input-container, .saved-words-container {
+            background-color: rgba(255, 255, 255, 0.5);
+            border: 2px solid #000;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        table {
+            width: 100%;
+            border: 2px solid #000;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+
+        th {
+            background-color: rgba(200, 200, 200, 0.8);
+        }
+
+        input[type="text"] {
+            border: 2px solid #000;
+            padding: 5px;
+            border-radius: 5px;
+            width: 300px;
+            box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .learned-list {
+            background-color: rgba(255, 255, 255, 0.5);
+            display: inline-block;
+            padding: 5px;
+            margin: 10px 0;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        input[type="submit"][value="削除"] {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"][value="削除"]:hover {
+            background-color: darkred;
+        }
+
+        input[type="submit"][value="更新"] {
+            background-color: green;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"][value="更新"]:hover {
+            background-color: darkgreen;
+        }
+    </style>
+
+    <script>
+        let isUpperCase = true;
+
+        function addLetter(letter) {
+            const wordInput = document.getElementById("word");
+            const nextLetter = isUpperCase ? letter.toUpperCase() : letter.toLowerCase();
+            wordInput.value += nextLetter;
+        }
+
+        function toggleCase() {
+            isUpperCase = !isUpperCase;
+            const caseIndicator = document.getElementById("caseIndicator");
+            caseIndicator.textContent = isUpperCase ? "大文字モード" : "小文字モード";
+        }
+
+        function confirmDelete() {
+            return confirm("本当にこの単語を削除しますか？");
+        }
+    </script>
+</head>
+<body>
+    <h1>クロアチア語 単語帳</h1>
+
+    <div class="input-container">
+        <form action="#" th:action="@{/anki}" method="post">
+            <label for="word"></label>
+            <input type="text" id="word" name="word" placeholder="単語・フレーズを入力" />
+            <br/>
+            <label for="meaning"></label>
+            <input type="text" id="meaning" name="meaning" placeholder="意味を入力" />
+            <br/>
+            <button type="button" onclick="toggleCase()">切り替え</button>
+            <span id="caseIndicator">大文字モード</span>
+            <div class="button-container">
+                <button type="button" onclick="addLetter('A')">A</button>
+                <button type="button" onclick="addLetter('B')">B</button>
+                <button type="button" onclick="addLetter('A')">A</button>
+                <button type="button" onclick="addLetter('B')">B</button>
+                <button type="button" onclick="addLetter('C')">C</button>
+                <button type="button" onclick="addLetter('Č')">Č</button>
+                <button type="button" onclick="addLetter('Ć')">Ć</button>
+                <button type="button" onclick="addLetter('D')">D</button>
+                <button type="button" onclick="addLetter('Dž')">Dž</button>
+                <button type="button" onclick="addLetter('Đ')">Đ</button>
+                <button type="button" onclick="addLetter('E')">E</button>
+                <button type="button" onclick="addLetter('F')">F</button>
+                <button type="button" onclick="addLetter('G')">G</button>
+                <button type="button" onclick="addLetter('H')">H</button>
+                <button type="button" onclick="addLetter('I')">I</button>
+                <button type="button" onclick="addLetter('J')">J</button>
+                <button type="button" onclick="addLetter('K')">K</button>
+                <button type="button" onclick="addLetter('L')">L</button>
+                <button type="button" onclick="addLetter('Lj')">Lj</button>
+                <button type="button" onclick="addLetter('M')">M</button>
+                <button type="button" onclick="addLetter('N')">N</button>
+                <button type="button" onclick="addLetter('Nj')">Nj</button>
+                <button type="button" onclick="addLetter('O')">O</button>
+                <button type="button" onclick="addLetter('P')">P</button>
+                <button type="button" onclick="addLetter('R')">R</button>
+                <button type="button" onclick="addLetter('S')">S</button>
+                <button type="button" onclick="addLetter('Š')">Š</button>
+                <button type="button" onclick="addLetter('T')">T</button>
+                <button type="button" onclick="addLetter('U')">U</button>
+                <button type="button" onclick="addLetter('V')">V</button>
+                <button type="button" onclick="addLetter('Z')">Z</button>
+                <button type="button" onclick="addLetter('Ž')">Ž</button>
+                <button type="button" onclick="addLetter('?')">?</button>
+                <button type="button" onclick="addLetter(' ')">スペース</button>
+            </div>
+            <br/>
+            <input type="submit" value="保存" />
+        </form>
+    </div>
+
+    <h2>保存された単語一覧</h2>
+    <div class="saved-words-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>単語</th>
+                    <th>意味</th>
+                    <th>アクション</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="word : ${words}">
+                    <td><strong th:text="${word.word}"></strong></td>
+                    <td th:text="${word.meaning}"></td>
+                    <td>
+                        <form th:action="@{/delete}" method="post" style="display:inline;" th:onsubmit="return confirmDelete();">
+                            <input type="hidden" name="word" th:value="${word.word}">
+                            <input type="submit" value="削除">
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <br/>  
+    <a th:href="@{/learnedWords}">覚えた単語一覧を見る</a>
+</body>
+</html>

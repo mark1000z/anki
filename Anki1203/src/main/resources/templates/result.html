@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>結果</title>
+</head>
+<body>
+    <!-- 結果メッセージを表示 -->
+    <h1 th:text="${resultMessage}"></h1>
+
+    <!-- 次の問題へ進むリンク (難易度パラメータをURLに追加) -->
+    <a th:href="@{/quiz(difficulty=${difficulty})}">次の問題に進む</a>
+    <a th:href="@{/ankiForm}">戻る</a>
+</body>
+</html>

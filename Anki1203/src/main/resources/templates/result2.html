@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>結果 - learnedWords</title>
+</head>
+<body>
+    <h1>結果</h1>
+    <p th:text="${resultMessage}"></p> <!-- 正解/不正解のメッセージ -->
+  
+
+    <a th:href="@{/learnedWords}">覚えた単語に戻る</a>
+    <a th:href="@{/ankiForm}">戻る</a>
+</body>
+</html>
+

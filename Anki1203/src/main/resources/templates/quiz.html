@@ -1,0 +1,37 @@
+<!DOCTYPE html> 
+<html lang="ja" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>クイズ</title>
+</head>
+<body>
+	<h1>忘れた単語 クイズ</h1>
+    <!-- 難易度の選択フォーム -->
+    <form th:action="@{/quiz}" method="get">
+        <label for="difficulty">難易度:</label>
+        <select name="difficulty" id="difficulty">
+            <option value="2" th:selected="${difficulty == 2}">2択・初級</option>
+            <option value="3" th:selected="${difficulty == 3}">3択・中級</option>
+            <option value="4" th:selected="${difficulty == 4}">4択・上級</option>
+        </select>
+        <button type="submit">選択</button>
+    </form>
+
+    <!-- クイズの問題と選択肢 -->
+    <h3>難易度: <span th:text="${difficulty}"></span>択</h3>
+    <h1 th:text="${question} + 'の意味は？'"></h1>
+    <form th:action="@{/checkAnswer}" method="post">
+        <div th:each="answer, iterStat : ${answers}">
+            <input type="radio" name="answer" th:value="${answer}" id="answer${iterStat.index}">
+            <label th:for="'answer' + ${iterStat.index}" th:text="${answer}"></label><br>
+        </div>
+
+        <input type="hidden" name="question" th:value="${question}">
+        <input type="hidden" name="correctAnswer" th:value="${correctAnswer}">
+        <input type="hidden" name="difficulty" th:value="${difficulty}">
+        <button type="submit">回答する</button>
+    </form>
+
+    <a th:href="@{/ankiForm}">戻る</a>
+</body>
+</html>

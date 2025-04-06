@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.app.mapper.AnkiMapper">
+
+    <!-- 単語を追加（addWord） -->
+    <insert id="addWord">
+        INSERT INTO vocabulary (word, meaning, learned)
+        VALUES (#{word}, #{meaning}, #{learned})
+    </insert>
+
+    <!-- 単語を追加（insertWord） -->
+    <insert id="insertWord">
+        INSERT INTO vocabulary (word, meaning, learned)
+        VALUES (#{word}, #{meaning}, #{learned})
+    </insert>
+
+    <!-- 単語を削除 -->
+    <delete id="deleteWordByWord">
+        DELETE FROM vocabulary WHERE word = #{word}
+    </delete>
+
+    <!-- 単語を「未習得」に設定 -->
+    <update id="markWordAsUnlearned">
+        UPDATE vocabulary SET learned = false WHERE word = #{word}
+    </update>
+
+    <!-- 単語を「習得済み」に設定 -->
+    <update id="markWordAsLearned">
+        UPDATE vocabulary SET learned = true WHERE word = #{word}
+    </update>
+
+    <!-- 習得していない単語を取得 -->
+   <!-- 習得していない単語または忘れた単語を取得 -->
+<select id="getUnlearnedWords" resultType="Anki">
+    SELECT * FROM vocabulary WHERE learned = false OR learned = 2
+</select>
+
+
+    <!-- 習得済みの単語を取得 -->
+    <select id="getLearnedWords" resultType="map">
+        SELECT word, meaning FROM vocabulary WHERE learned = true
+    </select>
+
+    <!-- ページネーション用全単語リスト取得 -->
+    <select id="getWordsPaginated" resultType="Anki">
+        SELECT * FROM vocabulary 
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 全単語数をカウント -->
+    <select id="countWords" resultType="int">
+        SELECT COUNT(*) FROM vocabulary
+    </select>
+
+    <!-- ページネーション用未習得単語リスト取得 -->
+    <select id="getUnlearnedWordsPaginated" resultType="Anki">
+        SELECT * FROM vocabulary 
+        WHERE learned = false 
+        LIMIT #{limit} OFFSET #{offset}
+    </select>
+
+    <!-- 未習得単語数をカウント -->
+    <select id="countUnlearnedWords" resultType="int">
+        SELECT COUNT(*) FROM vocabulary 
+        WHERE learned = false
+    </select>
+    
+    
+     <update id="updateLearnedStatus">
+    UPDATE vocabulary
+    SET learned = #{learned}
+    WHERE id = #{id}
+</update>
+<update id="updateWordStatus">
+    UPDATE vocabulary
+    SET learned = #{learned}
+    WHERE word = #{word}
+</update>
+
+<!-- 正解以外の選択肢をランダムに取得 -->
+<select id="getRandomMeaningsExcept" resultType="string">
+  SELECT meaning
+  FROM vocabulary
+  WHERE meaning != #{correctAnswer}
+  ORDER BY RAND()
+  LIMIT #{limit}
+</select>
+
+<select id="getAllWordsPaginated" parameterType="map" resultType="Anki">
+    SELECT *
+    FROM vocabulary
+    WHERE learned IN (0, 1, 2) -- 0, 1, 2 のすべてを取得
+    LIMIT #{limit} OFFSET #{offset}
+</select>
+
+<select id="countAllWords" resultType="int">
+    SELECT COUNT(*)
+    FROM vocabulary
+    WHERE learned IN (0, 1, 2) -- 0, 1, 2 のすべてをカウント
+</select>
+
+    
+    
+
+</mapper>
